@@ -10,6 +10,21 @@ export interface Summary {
   low_stock_products: number;
 }
 
+export interface RevenuePoint {
+  date: string;
+  revenue: number;
+}
+
+export interface OrdersByStatus {
+  status: string;
+  count: number;
+}
+
+export interface TopCategory {
+  category: string;
+  count: number;
+}
+
 export interface TopProduct {
   id: string;
   name: string;
@@ -28,7 +43,6 @@ export interface ActivityLog {
   email?: string;
   timestamp: string;
   product_name?: string;
-  customer_email?: string;
 }
 
 export interface ActivityBreakdown {
@@ -36,15 +50,26 @@ export interface ActivityBreakdown {
   count: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api/v1/analytics';
 
   getSummary(): Observable<Summary> {
     return this.http.get<Summary>(`${this.apiUrl}/summary`);
+  }
+
+  getRevenueOverTime(days: number = 30): Observable<RevenuePoint[]> {
+    const params = new HttpParams().set('days', days);
+    return this.http.get<RevenuePoint[]>(`${this.apiUrl}/revenue-over-time`, { params });
+  }
+
+  getOrdersByStatus(): Observable<OrdersByStatus[]> {
+    return this.http.get<OrdersByStatus[]>(`${this.apiUrl}/orders-by-status`);
+  }
+
+  getTopCategories(): Observable<TopCategory[]> {
+    return this.http.get<TopCategory[]>(`${this.apiUrl}/top-categories`);
   }
 
   getTopProducts(limit: number = 5): Observable<TopProduct[]> {
