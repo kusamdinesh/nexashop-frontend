@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService, Product, Category } from '../../../core/services/product';
+import { ToastService } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-product-list',
@@ -14,6 +15,7 @@ import { ProductService, Product, Category } from '../../../core/services/produc
 export class ProductListComponent implements OnInit {
   // ── Dependencies ─────────────────────────────────
   private productService = inject(ProductService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
 
   // ── State Signals ────────────────────────────────
@@ -56,10 +58,10 @@ export class ProductListComponent implements OnInit {
         this.totalPages.set(response.total_pages);
         this.isLoading.set(false);
       },
-      error: (err) => {
-        this.errorMessage.set('Failed to load products');
-        this.isLoading.set(false);
-      }
+    error: () => {
+      this.toastService.error('Failed to load products');
+      this.isLoading.set(false);
+    }
     });
   }
 
@@ -106,10 +108,11 @@ export class ProductListComponent implements OnInit {
       next: () => {
         this.showDeleteConfirm.set(false);
         this.selectedProduct.set(null);
+        this.toastService.success('Product deleted successfully');
         this.loadProducts();
       },
       error: () => {
-        this.errorMessage.set('Failed to delete product');
+        this.toastService.error('Failed to delete product');
       }
     });
   }

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { OrderService, Order } from '../../../core/services/order';
+import { ToastService } from '../../../core/services/toast';
+
 
 @Component({
   selector: 'app-order-list',
@@ -13,6 +15,7 @@ import { OrderService, Order } from '../../../core/services/order';
 })
 export class OrderListComponent implements OnInit {
   private orderService = inject(OrderService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
 
   orders = signal<Order[]>([]);
@@ -78,6 +81,7 @@ export class OrderListComponent implements OnInit {
     if (!order) return;
     this.orderService.updateStatus(order.id, this.newStatus()).subscribe({
       next: () => {
+        this.toastService.success('Order status updated!');
         this.showStatusModal.set(false);
         this.loadOrders();
       },
@@ -95,6 +99,7 @@ export class OrderListComponent implements OnInit {
     if (!order) return;
     this.orderService.cancelOrder(order.id).subscribe({
       next: () => {
+        this.toastService.success('Order cancelled successfully');
         this.showCancelConfirm.set(false);
         this.loadOrders();
       },

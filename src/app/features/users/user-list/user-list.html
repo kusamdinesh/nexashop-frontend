@@ -1,0 +1,92 @@
+<div class="page-header">
+  <div>
+    <h2>User Management</h2>
+    <p>Manage user roles and access — Admin only</p>
+  </div>
+</div>
+
+@if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+}
+
+@if (isLoading()) {
+  <div class="loading">Loading users...</div>
+}
+
+@if (!isLoading()) {
+  <div class="table-card">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user.id) {
+          <tr>
+            <td>
+              <div class="user-info">
+                <div class="user-avatar">
+                  {{ user.full_name.charAt(0) }}
+                </div>
+                <div>
+                  <div class="user-name">{{ user.full_name }}</div>
+                  <div class="user-email">{{ user.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="role-badge {{ getRoleClass(user.role) }}">
+                {{ user.role | titlecase }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class.active]="user.is_active" [class.inactive]="!user.is_active">
+                {{ user.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="date">{{ user.created_at | date:'MMM d, y' }}</td>
+            <td>
+              <div class="actions">
+                <button class="btn-role" (click)="onChangeRole(user)">Change Role</button>
+                <button
+                  class="btn-toggle"
+                  [class.deactivate]="user.is_active"
+                  [class.activate]="!user.is_active"
+                  (click)="onToggleActive(user)"
+                >
+                  {{ user.is_active ? 'Deactivate' : 'Activate' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (showRoleModal()) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Change Role</h3>
+      <p>Update role for <strong>{{ selectedUser()?.full_name }}</strong></p>
+      <div class="form-group">
+        <label>New Role</label>
+        <select [ngModel]="newRole()" (ngModelChange)="newRole.set($event)">
+          @for (role of roles; track role) {
+            <option [value]="role">{{ role | titlecase }}</option>
+          }
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="onCloseModal()">Cancel</button>
+        <button class="btn-confirm" (click)="onConfirmRole()">Update Role</button>
+      </div>
+    </div>
+  </div>
+}

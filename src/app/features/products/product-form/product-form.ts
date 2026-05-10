@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProductService, ProductCreate, Category } from '../../../core/services/product';
+import { ToastService } from '../../../core/services/toast';
+
 
 @Component({
   selector: 'app-product-form',
@@ -14,6 +16,7 @@ import { ProductService, ProductCreate, Category } from '../../../core/services/
 export class ProductFormComponent implements OnInit {
   // ── Dependencies ─────────────────────────────────
   private productService = inject(ProductService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -106,7 +109,7 @@ export class ProductFormComponent implements OnInit {
     if (this.isEditMode()) {
       this.productService.updateProduct(this.productId()!, productData).subscribe({
         next: () => {
-          this.isSaving.set(false);
+          this.toastService.success('Product updated successfully! ✏️');
           this.router.navigate(['/products']);
         },
         error: (err) => {
@@ -117,12 +120,12 @@ export class ProductFormComponent implements OnInit {
     } else {
       this.productService.createProduct(productData).subscribe({
         next: () => {
-          this.isSaving.set(false);
+          this.toastService.success('Product created successfully! 📦');
           this.router.navigate(['/products']);
         },
         error: (err) => {
+          this.toastService.error(err.error?.detail || 'Failed to create product');
           this.isSaving.set(false);
-          this.errorMessage.set(err.error?.detail || 'Failed to create product');
         }
       });
     }

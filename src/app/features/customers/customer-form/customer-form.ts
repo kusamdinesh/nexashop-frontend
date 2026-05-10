@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CustomerService, CustomerCreate } from '../../../core/services/customer';
+import { ToastService } from '../../../core/services/toast';
+
 
 @Component({
   selector: 'app-customer-form',
@@ -14,6 +16,7 @@ import { CustomerService, CustomerCreate } from '../../../core/services/customer
 export class CustomerFormComponent implements OnInit {
   // ── Dependencies ─────────────────────────────────
   private customerService = inject(CustomerService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -90,7 +93,7 @@ export class CustomerFormComponent implements OnInit {
     if (this.isEditMode()) {
       this.customerService.updateCustomer(this.customerId()!, customerData).subscribe({
         next: () => {
-          this.isSaving.set(false);
+          this.toastService.success('Customer updated successfully!');
           this.router.navigate(['/customers']);
         },
         error: (err) => {
@@ -101,7 +104,7 @@ export class CustomerFormComponent implements OnInit {
     } else {
       this.customerService.createCustomer(customerData).subscribe({
         next: () => {
-          this.isSaving.set(false);
+          this.toastService.success('Customer added successfully! 👥');
           this.router.navigate(['/customers']);
         },
         error: (err) => {

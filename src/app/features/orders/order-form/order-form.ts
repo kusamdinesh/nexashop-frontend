@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { OrderService } from '../../../core/services/order';
 import { CustomerService, Customer } from '../../../core/services/customer';
 import { ProductService, Product } from '../../../core/services/product';
+import { ToastService } from '../../../core/services/toast';
+
 
 interface CartItem {
   product: Product;
@@ -22,6 +24,7 @@ export class OrderFormComponent implements OnInit {
   private orderService = inject(OrderService);
   private customerService = inject(CustomerService);
   private productService = inject(ProductService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
 
   customers = signal<Customer[]>([]);
@@ -108,12 +111,12 @@ export class OrderFormComponent implements OnInit {
       notes: this.notes() || undefined
     }).subscribe({
       next: () => {
-        this.isSaving.set(false);
+        this.toastService.success('Order placed successfully! 🛒');
         this.router.navigate(['/orders']);
       },
       error: (err) => {
+        this.toastService.error(err.error?.detail || 'Failed to place order');
         this.isSaving.set(false);
-        this.errorMessage.set(err.error?.detail || 'Failed to place order');
       }
     });
   }

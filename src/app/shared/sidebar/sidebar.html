@@ -1,6 +1,15 @@
 <aside class="sidebar">
+  <!-- Role Badge -->
+  @if (currentUser()) {
+    <div class="role-badge-container">
+      <span class="role-badge role-{{ userRole() }}">
+        {{ userRole() | titlecase }}
+      </span>
+    </div>
+  }
+
   <nav class="sidebar-nav">
-    @for (item of menuItems; track item.route) {
+    @for (item of visibleMenuItems(); track item.route) {
       <div
         class="nav-item"
         [class.active]="isActive(item.route)"

@@ -8,6 +8,7 @@ export interface User {
   email: string;
   is_active: boolean;
   is_admin: boolean;
+  role: string;
   created_at: string;
 }
 
@@ -29,6 +30,15 @@ export class AuthService {
 
   // ── Computed values derived from signals ─────────
   isLoggedIn = computed(() => !!this.token());
+  // ── Role Computed Signals ────────────────────────
+  isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  isManager = computed(() => 
+    this.currentUser()?.role === 'admin' || 
+    this.currentUser()?.role === 'manager'
+  );
+  isStaff = computed(() => !!this.currentUser());
+
+  getRole = computed(() => this.currentUser()?.role || '');
   currentUser$ = computed(() => this.currentUser());
 
   constructor(private http: HttpClient) {

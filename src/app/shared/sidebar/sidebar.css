@@ -71,3 +71,36 @@
 .nav-label {
   font-size: 14px;
 }
+.role-badge-container {
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 980px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.role-badge.role-admin {
+  background: rgba(255,69,58,0.1);
+  color: #ff453a;
+  border: 1px solid rgba(255,69,58,0.2);
+}
+
+.role-badge.role-manager {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border: 1px solid rgba(41,151,255,0.2);
+}
+
+.role-badge.role-staff {
+  background: var(--success-subtle);
+  color: var(--success);
+  border: 1px solid rgba(48,209,88,0.2);
+}

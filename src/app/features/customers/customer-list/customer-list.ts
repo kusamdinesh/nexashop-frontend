@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CustomerService, Customer } from '../../../core/services/customer';
+import { ToastService } from '../../../core/services/toast';
+
 
 @Component({
   selector: 'app-customer-list',
@@ -14,6 +16,7 @@ import { CustomerService, Customer } from '../../../core/services/customer';
 export class CustomerListComponent implements OnInit {
   // ── Dependencies ─────────────────────────────────
   private customerService = inject(CustomerService);
+  private toastService = inject(ToastService);
   private router = inject(Router);
 
   // ── State Signals ────────────────────────────────
@@ -88,12 +91,12 @@ export class CustomerListComponent implements OnInit {
 
     this.customerService.deleteCustomer(customer.id).subscribe({
       next: () => {
+        this.toastService.success('Customer removed successfully');
         this.showDeleteConfirm.set(false);
-        this.selectedCustomer.set(null);
         this.loadCustomers();
       },
       error: () => {
-        this.errorMessage.set('Failed to delete customer');
+        this.toastService.error('Failed to remove customer');
       }
     });
   }
