@@ -1,0 +1,25 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="menu-btn" (click)="onToggleMenu()" aria-label="Toggle sidebar">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <span class="brand-name">Nexa<span>Shop</span></span>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    @if (currentUser()) {
+      <div class="user-pill">
+        <div class="user-avatar">
+          {{ currentUser()!.full_name.charAt(0).toUpperCase() }}
+        </div>
+        <span class="user-name">{{ currentUser()!.full_name }}</span>
+      </div>
+    }
+    <button class="logout-btn" (click)="onLogout()">Sign out</button>
+  </div>
+</nav>

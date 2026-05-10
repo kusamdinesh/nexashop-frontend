@@ -1,0 +1,105 @@
+<div class="page-header">
+  <h2 class="page-title">Dashboard</h2>
+  <p class="page-subtitle">Welcome back — here's what's happening in your store</p>
+</div>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Loading metrics...</span>
+  </div>
+}
+
+@if (!isLoading() && summary()) {
+  <div class="stats-grid">
+    <div class="stat-card" (click)="navigateTo('/products')">
+      <div class="stat-icon blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2997ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <p class="stat-label">Products</p>
+        <h3 class="stat-value">{{ summary()!.total_products }}</h3>
+      </div>
+      <span class="stat-arrow">›</span>
+    </div>
+
+    <div class="stat-card" (click)="navigateTo('/orders')">
+      <div class="stat-icon purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bf5af2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <p class="stat-label">Orders</p>
+        <h3 class="stat-value">{{ summary()!.total_orders }}</h3>
+      </div>
+      <span class="stat-arrow">›</span>
+    </div>
+
+    <div class="stat-card" (click)="navigateTo('/customers')">
+      <div class="stat-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#30d158" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <p class="stat-label">Customers</p>
+        <h3 class="stat-value">{{ summary()!.total_customers }}</h3>
+      </div>
+      <span class="stat-arrow">›</span>
+    </div>
+
+    <div class="stat-card" (click)="navigateTo('/analytics')">
+      <div class="stat-icon orange">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <p class="stat-label">Revenue</p>
+        <h3 class="stat-value">${{ summary()!.total_revenue.toFixed(0) }}</h3>
+      </div>
+      <span class="stat-arrow">›</span>
+    </div>
+  </div>
+
+  @if (summary()!.low_stock_products > 0) {
+    <div class="warning-banner">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      {{ summary()!.low_stock_products }} product(s) are running low on stock.
+      <span class="warning-link" (click)="navigateTo('/inventory')">View Inventory →</span>
+    </div>
+  }
+
+  <div class="quick-links">
+    <h3 class="section-title">Quick Actions</h3>
+    <div class="links-grid">
+      <div class="link-card" (click)="navigateTo('/products/new')">
+        <span class="link-icon">📦</span>
+        <span>Add Product</span>
+      </div>
+      <div class="link-card" (click)="navigateTo('/customers/new')">
+        <span class="link-icon">👥</span>
+        <span>Add Customer</span>
+      </div>
+      <div class="link-card" (click)="navigateTo('/analytics')">
+        <span class="link-icon">📈</span>
+        <span>Analytics</span>
+      </div>
+      <div class="link-card" (click)="navigateTo('/inventory')">
+        <span class="link-icon">🏭</span>
+        <span>Inventory</span>
+      </div>
+    </div>
+  </div>
+}

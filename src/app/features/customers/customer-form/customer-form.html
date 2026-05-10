@@ -1,0 +1,130 @@
+<div class="page-header">
+  <h2>{{ isEditMode() ? 'Edit Customer' : 'Add Customer' }}</h2>
+  <p>{{ isEditMode() ? 'Update customer details' : 'Add a new customer' }}</p>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading customer...</div>
+}
+
+@if (!isLoading()) {
+  <div class="form-card">
+
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-section">
+      <h3 class="section-title">Personal Information</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name <span class="required">*</span></label>
+          <input
+            type="text"
+            [ngModel]="firstName()"
+            (ngModelChange)="firstName.set($event)"
+            placeholder="Jane"
+          />
+        </div>
+        <div class="form-group">
+          <label>Last Name <span class="required">*</span></label>
+          <input
+            type="text"
+            [ngModel]="lastName()"
+            (ngModelChange)="lastName.set($event)"
+            placeholder="Smith"
+          />
+        </div>
+        <div class="form-group">
+          <label>Email <span class="required">*</span></label>
+          <input
+            type="email"
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+            placeholder="jane@example.com"
+            [disabled]="isEditMode()"
+          />
+          @if (isEditMode()) {
+            <small class="hint">Email cannot be changed</small>
+          }
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input
+            type="text"
+            [ngModel]="phone()"
+            (ngModelChange)="phone.set($event)"
+            placeholder="555-0101"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="section-title">Address Information</h3>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Address</label>
+          <input
+            type="text"
+            [ngModel]="address()"
+            (ngModelChange)="address.set($event)"
+            placeholder="123 Main St"
+          />
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input
+            type="text"
+            [ngModel]="city()"
+            (ngModelChange)="city.set($event)"
+            placeholder="New York"
+          />
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input
+            type="text"
+            [ngModel]="state()"
+            (ngModelChange)="state.set($event)"
+            placeholder="NY"
+          />
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <input
+            type="text"
+            [ngModel]="country()"
+            (ngModelChange)="country.set($event)"
+            placeholder="USA"
+          />
+        </div>
+        <div class="form-group">
+          <label>Zip Code</label>
+          <input
+            type="text"
+            [ngModel]="zipCode()"
+            (ngModelChange)="zipCode.set($event)"
+            placeholder="10001"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button
+        class="btn-save"
+        (click)="onSave()"
+        [disabled]="isSaving()"
+      >
+        @if (isSaving()) {
+          Saving...
+        } @else {
+          {{ isEditMode() ? 'Update Customer' : 'Add Customer' }}
+        }
+      </button>
+    </div>
+
+  </div>
+}

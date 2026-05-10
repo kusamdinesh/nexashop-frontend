@@ -1,0 +1,129 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>{{ isEditMode() ? 'Edit Product' : 'Add Product' }}</h2>
+    <p>{{ isEditMode() ? 'Update product details' : 'Add a new product to your catalog' }}</p>
+  </div>
+</div>
+
+<!-- Loading -->
+@if (isLoading()) {
+  <div class="loading">Loading product...</div>
+}
+
+@if (!isLoading()) {
+  <div class="form-card">
+
+    <!-- Error -->
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <div class="form-grid">
+
+      <!-- Name -->
+      <div class="form-group full-width">
+        <label>Product Name <span class="required">*</span></label>
+        <input
+          type="text"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          placeholder="e.g. iPhone 15 Pro"
+        />
+      </div>
+
+      <!-- SKU -->
+      <div class="form-group">
+        <label>SKU <span class="required">*</span></label>
+        <input
+          type="text"
+          [ngModel]="sku()"
+          (ngModelChange)="sku.set($event)"
+          placeholder="e.g. IPHONE-15-001"
+          [disabled]="isEditMode()"
+        />
+        @if (isEditMode()) {
+          <small class="hint">SKU cannot be changed after creation</small>
+        }
+      </div>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label>Category</label>
+        <select
+          [ngModel]="categoryId()"
+          (ngModelChange)="categoryId.set($event)"
+        >
+          <option value="">No Category</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Price -->
+      <div class="form-group">
+        <label>Price ($) <span class="required">*</span></label>
+        <input
+          type="number"
+          [ngModel]="price()"
+          (ngModelChange)="price.set($event)"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <!-- Stock -->
+      <div class="form-group">
+        <label>Stock Quantity <span class="required">*</span></label>
+        <input
+          type="number"
+          [ngModel]="stockQuantity()"
+          (ngModelChange)="stockQuantity.set($event)"
+          placeholder="0"
+          min="0"
+        />
+      </div>
+
+      <!-- Image URL -->
+      <div class="form-group full-width">
+        <label>Image URL</label>
+        <input
+          type="text"
+          [ngModel]="imageUrl()"
+          (ngModelChange)="imageUrl.set($event)"
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="form-group full-width">
+        <label>Description</label>
+        <textarea
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          placeholder="Product description..."
+          rows="4"
+        ></textarea>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button
+        class="btn-save"
+        (click)="onSave()"
+        [disabled]="isSaving()"
+      >
+        @if (isSaving()) {
+          Saving...
+        } @else {
+          {{ isEditMode() ? 'Update Product' : 'Add Product' }}
+        }
+      </button>
+    </div>
+
+  </div>
+}

@@ -1,0 +1,312 @@
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a237e;
+  margin-bottom: 4px;
+}
+
+.page-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}
+
+/* ── Stats Grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.stat-icon {
+  font-size: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card.blue .stat-icon { background: #e3f2fd; }
+.stat-card.green .stat-icon { background: #e8f5e9; }
+.stat-card.purple .stat-icon { background: #f3e5f5; }
+.stat-card.orange .stat-icon { background: #fff3e0; }
+.stat-card.red .stat-icon { background: #ffebee; }
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a237e;
+}
+
+/* ── Charts Grid ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a237e;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+.db-tag.mongo {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.db-tag.postgres {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* ── Bar Chart ── */
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label {
+  width: 180px;
+  font-size: 13px;
+  color: #333;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #3f51b5;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.bar-count {
+  width: 30px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3f51b5;
+}
+
+/* ── Products List ── */
+.products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.product-name {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.product-sku {
+  font-size: 12px;
+  color: #999;
+}
+
+.product-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.stock-badge {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.stock-badge.ok {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.stock-badge.low {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.stock-badge.out {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.product-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+/* ── Customer Growth ── */
+.growth-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.growth-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.growth-date {
+  width: 100px;
+  font-size: 13px;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.growth-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.growth-bar-fill {
+  height: 100%;
+  background: #43a047;
+  border-radius: 4px;
+}
+
+.growth-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #43a047;
+  width: 30px;
+  text-align: right;
+}
+
+/* ── Activity List ── */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.activity-icon {
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-info {
+  flex: 1;
+}
+
+.activity-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.activity-meta {
+  font-size: 12px;
+  color: #999;
+}
+
+.activity-time {
+  font-size: 11px;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+.no-data {
+  text-align: center;
+  padding: 32px;
+  color: #999;
+  font-size: 14px;
+}

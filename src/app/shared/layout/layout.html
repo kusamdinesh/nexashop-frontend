@@ -1,0 +1,19 @@
+<div class="layout">
+  <!-- Navbar -->
+  <app-navbar (menuToggled)="onMenuToggle()" />
+
+  <!-- Body -->
+  <div class="layout-body">
+
+    <!-- Sidebar -->
+    @if (isSidebarOpen()) {
+      <app-sidebar />
+    }
+
+    <!-- Page Content Goes Here -->
+    <main class="main-content">
+      <router-outlet />
+    </main>
+
+  </div>
+</div>

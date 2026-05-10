@@ -1,0 +1,21 @@
+.layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  padding: 36px;
+  overflow-y: auto;
+  background: var(--bg);
+}

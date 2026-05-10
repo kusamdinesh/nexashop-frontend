@@ -1,0 +1,155 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Products</h2>
+    <p>Manage your product catalog</p>
+  </div>
+  <button class="btn-add" (click)="onAddProduct()">
+    + Add Product
+  </button>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <input
+    class="search-input"
+    type="text"
+    placeholder="Search by name or SKU..."
+    [ngModel]="searchQuery()"
+    (ngModelChange)="searchQuery.set($event)"
+    (keyup.enter)="onSearch()"
+  />
+  <select
+    class="category-select"
+    [ngModel]="selectedCategory()"
+    (ngModelChange)="selectedCategory.set($event); onCategoryChange()"
+  >
+    <option value="">All Categories</option>
+    @for (category of categories(); track category.id) {
+      <option [value]="category.id">{{ category.name }}</option>
+    }
+  </select>
+  <button class="btn-search" (click)="onSearch()">Search</button>
+</div>
+
+<!-- Error -->
+@if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+}
+
+<!-- Loading -->
+@if (isLoading()) {
+  <div class="loading">Loading products...</div>
+}
+
+<!-- Products Table -->
+@if (!isLoading()) {
+  <div class="table-card">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (hasProducts()) {
+          @for (product of products(); track product.id) {
+            <tr>
+              <td>
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-desc">{{ product.description }}</div>
+              </td>
+              <td><span class="sku-badge">{{ product.sku }}</span></td>
+              <td>{{ getCategoryName(product.category_id) }}</td>
+              <td class="price">${{ product.price.toFixed(2) }}</td>
+              <td>
+                <span
+                  class="stock-badge"
+                  [class.low]="product.stock_quantity < 10"
+                  [class.out]="product.stock_quantity === 0"
+                >
+                  {{ product.stock_quantity }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.active]="product.is_active"
+                  [class.inactive]="!product.is_active"
+                >
+                  {{ product.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="btn-edit" (click)="onEditProduct(product)">Edit</button>
+                  <button class="btn-delete" (click)="onDeleteClick(product)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          }
+        } @else {
+          <tr>
+            <td colspan="7" class="no-data">No products found</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button
+          class="page-btn"
+          [disabled]="currentPage() === 1"
+          (click)="onPageChange(currentPage() - 1)"
+        >
+          Previous
+        </button>
+
+        @for (page of getPages(); track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === currentPage()"
+            (click)="onPageChange(page)"
+          >
+            {{ page }}
+          </button>
+        }
+
+        <button
+          class="page-btn"
+          [disabled]="currentPage() === totalPages()"
+          (click)="onPageChange(currentPage() + 1)"
+        >
+          Next
+        </button>
+      </div>
+    }
+
+    <!-- Total -->
+    <div class="table-footer">
+      Showing {{ products().length }} of {{ totalItems() }} products
+    </div>
+  </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteConfirm()) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Delete Product</h3>
+      <p>Are you sure you want to delete <strong>{{ selectedProduct()?.name }}</strong>?</p>
+      <p class="modal-note">This will deactivate the product. It can be restored later.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="onCancelDelete()">Cancel</button>
+        <button class="btn-confirm-delete" (click)="onConfirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+}
