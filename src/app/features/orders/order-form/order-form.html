@@ -1,0 +1,129 @@
+<div class="page-header">
+  <h2>New Order</h2>
+  <p>Create a new customer order</p>
+</div>
+
+@if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+}
+
+<div class="order-grid">
+
+  <!-- Left: Order Builder -->
+  <div class="order-builder">
+
+    <!-- Customer Selection -->
+    <div class="form-card">
+      <h3 class="card-title">Customer</h3>
+      <select
+        class="form-select"
+        [ngModel]="selectedCustomerId()"
+        (ngModelChange)="selectedCustomerId.set($event)"
+      >
+        <option value="">Select a customer...</option>
+        @for (customer of customers(); track customer.id) {
+          <option [value]="customer.id">
+            {{ customer.first_name }} {{ customer.last_name }} — {{ customer.email }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <!-- Product Selection -->
+    <div class="form-card">
+      <h3 class="card-title">Add Products</h3>
+      <div class="product-picker">
+        <select
+          class="form-select"
+          [ngModel]="selectedProductId()"
+          (ngModelChange)="selectedProductId.set($event)"
+        >
+          <option value="">Select a product...</option>
+          @for (product of products(); track product.id) {
+            <option [value]="product.id">
+              {{ product.name }} — ${{ product.price }} ({{ product.stock_quantity }} in stock)
+            </option>
+          }
+        </select>
+        <div class="qty-row">
+          <label>Qty</label>
+          <input
+            type="number"
+            class="qty-input"
+            [ngModel]="selectedQuantity()"
+            (ngModelChange)="selectedQuantity.set($event)"
+            min="1"
+          />
+          <button class="btn-add-item" (click)="onAddToCart()">Add</button>
+        </div>
+      </div>
+
+      <!-- Cart Items -->
+      @if (cart().length > 0) {
+        <div class="cart-items">
+          @for (item of cart(); track item.product.id) {
+            <div class="cart-item">
+              <div class="cart-item-info">
+                <span class="cart-item-name">{{ item.product.name }}</span>
+                <span class="cart-item-price">${{ item.product.price }} × {{ item.quantity }}</span>
+              </div>
+              <div class="cart-item-right">
+                <span class="cart-item-total">${{ (item.product.price * item.quantity).toFixed(2) }}</span>
+                <button class="btn-remove" (click)="onRemoveFromCart(item.product.id)">✕</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-cart">No products added yet</div>
+      }
+    </div>
+
+    <!-- Notes -->
+    <div class="form-card">
+      <h3 class="card-title">Notes (Optional)</h3>
+      <textarea
+        class="notes-input"
+        [ngModel]="notes()"
+        (ngModelChange)="notes.set($event)"
+        placeholder="Delivery instructions, special requests..."
+        rows="3"
+      ></textarea>
+    </div>
+
+  </div>
+
+  <!-- Right: Order Summary -->
+  <div class="order-summary">
+    <div class="summary-card">
+      <h3 class="card-title">Order Summary</h3>
+
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>${{ subtotal().toFixed(2) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax (10%)</span>
+          <span>${{ tax().toFixed(2) }}</span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total</span>
+          <span>${{ total().toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <div class="summary-actions">
+        <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button
+          class="btn-place-order"
+          (click)="onPlaceOrder()"
+          [disabled]="isSaving() || cart().length === 0 || !selectedCustomerId()"
+        >
+          {{ isSaving() ? 'Placing...' : 'Place Order' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,1 +1,76 @@
-<p>order-detail works!</p>
+<div class="page-header">
+  <button class="btn-back" (click)="onBack()">← Back to Orders</button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading order...</div>
+}
+
+@if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+}
+
+@if (!isLoading() && order()) {
+  <div class="order-detail-grid">
+
+    <!-- Order Info -->
+    <div class="detail-card">
+      <div class="order-header">
+        <div>
+          <h2 class="order-number">{{ order()!.order_number }}</h2>
+          <p class="order-date">{{ order()!.created_at | date:'MMMM d, y — h:mm a' }}</p>
+        </div>
+        <span class="status-badge {{ getStatusClass(order()!.status) }}">
+          {{ order()!.status | titlecase }}
+        </span>
+      </div>
+
+      @if (order()!.notes) {
+        <div class="order-notes">
+          <strong>Notes:</strong> {{ order()!.notes }}
+        </div>
+      }
+    </div>
+
+    <!-- Order Items -->
+    <div class="detail-card">
+      <h3 class="card-title">Order Items</h3>
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Unit Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of order()!.items; track item.id) {
+            <tr>
+              <td class="product-id">{{ item.product_id | slice:0:12 }}...</td>
+              <td>${{ item.unit_price.toFixed(2) }}</td>
+              <td>{{ item.quantity }}</td>
+              <td class="item-total">${{ item.total_price.toFixed(2) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>${{ order()!.subtotal.toFixed(2) }}</span>
+        </div>
+        <div class="total-row">
+          <span>Tax (10%)</span>
+          <span>${{ order()!.tax.toFixed(2) }}</span>
+        </div>
+        <div class="total-row grand-total">
+          <span>Total</span>
+          <span>${{ order()!.total.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+}

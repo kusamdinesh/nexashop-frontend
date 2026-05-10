@@ -51,6 +51,18 @@ export const routes: Routes = [
             .then(m => m.ProductFormComponent)
       },
       {
+        path: 'orders/new',
+        loadComponent: () =>
+          import('./features/orders/order-form/order-form')
+            .then(m => m.OrderFormComponent)
+      },
+      {
+        path: 'orders/:id',
+        loadComponent: () =>
+          import('./features/orders/order-detail/order-detail')
+            .then(m => m.OrderDetailComponent)
+      },
+      {
         path: 'orders',
         loadComponent: () =>
           import('./features/orders/order-list/order-list')

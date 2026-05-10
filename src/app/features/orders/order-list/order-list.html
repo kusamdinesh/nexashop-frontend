@@ -1,1 +1,149 @@
-<p>order-list works!</p>
+<div class="page-header">
+  <div>
+    <h2>Orders</h2>
+    <p>Manage and track all customer orders</p>
+  </div>
+  <button class="btn-add" (click)="onNewOrder()">+ New Order</button>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <input
+    class="search-input"
+    type="text"
+    placeholder="Search by order number..."
+    [ngModel]="searchQuery()"
+    (ngModelChange)="searchQuery.set($event)"
+    (keyup.enter)="onSearch()"
+  />
+  <select
+    class="filter-select"
+    [ngModel]="statusFilter()"
+    (ngModelChange)="statusFilter.set($event); onFilterChange()"
+  >
+    <option value="">All Statuses</option>
+    @for (s of statuses; track s) {
+      <option [value]="s">{{ s | titlecase }}</option>
+    }
+  </select>
+  <button class="btn-search" (click)="onSearch()">Search</button>
+</div>
+
+@if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+}
+
+@if (isLoading()) {
+  <div class="loading">Loading orders...</div>
+}
+
+@if (!isLoading()) {
+  <div class="table-card">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Customer</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (hasOrders()) {
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td>
+                <span class="order-number">{{ order.order_number }}</span>
+              </td>
+              <td>
+                <span class="customer-id">{{ order.customer_id | slice:0:8 }}...</span>
+              </td>
+              <td>
+                <span class="items-count">{{ order.items.length }} item(s)</span>
+              </td>
+              <td class="total">${{ order.total.toFixed(2) }}</td>
+              <td>
+                <span class="status-badge {{ getStatusClass(order.status) }}">
+                  {{ order.status | titlecase }}
+                </span>
+              </td>
+              <td class="date">
+                {{ order.created_at | date:'MMM d, y' }}
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="btn-view" (click)="onViewOrder(order)">View</button>
+                  <button class="btn-status" (click)="onUpdateStatus(order)">Status</button>
+                  @if (order.status !== 'delivered' && order.status !== 'cancelled') {
+                    <button class="btn-cancel" (click)="onCancelClick(order)">Cancel</button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        } @else {
+          <tr>
+            <td colspan="7" class="no-data">No orders found</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="onPageChange(currentPage() - 1)">←</button>
+        @for (page of getPages(); track page) {
+          <button class="page-btn" [class.active]="page === currentPage()" (click)="onPageChange(page)">{{ page }}</button>
+        }
+        <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="onPageChange(currentPage() + 1)">→</button>
+      </div>
+    }
+
+    <div class="table-footer">
+      Showing {{ orders().length }} of {{ totalItems() }} orders
+    </div>
+  </div>
+}
+
+<!-- Update Status Modal -->
+@if (showStatusModal()) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Update Order Status</h3>
+      <p>Order <strong>{{ selectedOrder()?.order_number }}</strong></p>
+      <div class="form-group">
+        <label>New Status</label>
+        <select
+          [ngModel]="newStatus()"
+          (ngModelChange)="newStatus.set($event)"
+        >
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ s | titlecase }}</option>
+          }
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel-modal" (click)="onCloseModals()">Cancel</button>
+        <button class="btn-confirm" (click)="onConfirmStatus()">Update</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Cancel Confirm Modal -->
+@if (showCancelConfirm()) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Cancel Order</h3>
+      <p>Are you sure you want to cancel <strong>{{ selectedOrder()?.order_number }}</strong>?</p>
+      <p class="modal-note">Stock will be restored automatically.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel-modal" (click)="onCloseModals()">Keep Order</button>
+        <button class="btn-confirm-danger" (click)="onConfirmCancel()">Cancel Order</button>
+      </div>
+    </div>
+  </div>
+}
