@@ -1,1 +1,245 @@
-<p>inventory-list works!</p>
+<div class="page-header">
+  <div>
+    <h2>Inventory</h2>
+    <p>Monitor and manage stock levels</p>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+@if (summary()) {
+  <div class="summary-grid">
+    <div class="summary-card total" (click)="statusFilter.set(''); onFilterChange()">
+      <div class="summary-icon">📦</div>
+      <div class="summary-info">
+        <p class="summary-label">Total Products</p>
+        <h3 class="summary-value">{{ summary()!.total }}</h3>
+      </div>
+    </div>
+    <div class="summary-card out" (click)="statusFilter.set('out'); onFilterChange()">
+      <div class="summary-icon">🚫</div>
+      <div class="summary-info">
+        <p class="summary-label">Out of Stock</p>
+        <h3 class="summary-value">{{ summary()!.out_of_stock }}</h3>
+      </div>
+    </div>
+    <div class="summary-card low" (click)="statusFilter.set('low'); onFilterChange()">
+      <div class="summary-icon">⚠️</div>
+      <div class="summary-info">
+        <p class="summary-label">Low Stock</p>
+        <h3 class="summary-value">{{ summary()!.low_stock }}</h3>
+      </div>
+    </div>
+    <div class="summary-card ok" (click)="statusFilter.set('ok'); onFilterChange()">
+      <div class="summary-icon">✅</div>
+      <div class="summary-info">
+        <p class="summary-label">Well Stocked</p>
+        <h3 class="summary-value">{{ summary()!.well_stocked }}</h3>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Filters -->
+<div class="filters-bar">
+  <input
+    class="search-input"
+    type="text"
+    placeholder="Search by name or SKU..."
+    [ngModel]="searchQuery()"
+    (ngModelChange)="searchQuery.set($event)"
+    (keyup.enter)="onSearch()"
+  />
+  <select
+    class="filter-select"
+    [ngModel]="statusFilter()"
+    (ngModelChange)="statusFilter.set($event); onFilterChange()"
+  >
+    <option value="">All Status</option>
+    <option value="out">Out of Stock</option>
+    <option value="low">Low Stock</option>
+    <option value="ok">In Stock</option>
+  </select>
+  <button class="btn-search" (click)="onSearch()">Search</button>
+</div>
+
+@if (isLoading()) {
+  <div class="loading">Loading inventory...</div>
+}
+
+@if (!isLoading()) {
+  <div class="table-card">
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (hasItems()) {
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>
+                <div class="product-name">{{ item.name }}</div>
+              </td>
+              <td><span class="sku-badge">{{ item.sku }}</span></td>
+              <td class="category">{{ item.category }}</td>
+              <td class="price">${{ item.price.toFixed(2) }}</td>
+              <td>
+                <div class="stock-display">
+                  <span class="stock-number" [class]="item.status">
+                    {{ item.stock_quantity }}
+                  </span>
+                  <div class="stock-bar-track">
+                    <div
+                      class="stock-bar-fill {{ item.status }}"
+                      [style.width.%]="Math.min((item.stock_quantity / 100) * 100, 100)"
+                    ></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="status-badge {{ item.status }}">
+                  {{ getStatusLabel(item.status) }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="btn-adjust" (click)="onAdjustStock(item)">
+                    Adjust
+                  </button>
+                  <button class="btn-history" (click)="onViewHistory(item)">
+                    History
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        } @else {
+          <tr>
+            <td colspan="7" class="no-data">No products found</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="onPageChange(currentPage() - 1)">←</button>
+        @for (page of getPages(); track page) {
+          <button class="page-btn" [class.active]="page === currentPage()" (click)="onPageChange(page)">{{ page }}</button>
+        }
+        <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="onPageChange(currentPage() + 1)">→</button>
+      </div>
+    }
+
+    <div class="table-footer">
+      Showing {{ items().length }} of {{ totalItems() }} products
+    </div>
+  </div>
+}
+
+<!-- Adjust Stock Modal -->
+@if (showAdjustModal()) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Adjust Stock</h3>
+      <p>Product: <strong>{{ selectedItem()?.name }}</strong></p>
+      <p class="current-stock">Current Stock: <span>{{ selectedItem()?.stock_quantity }}</span></p>
+
+      <div class="adjust-controls">
+        <button class="btn-minus" (click)="adjustmentValue.set(adjustmentValue() - 1)">−</button>
+        <input
+          type="number"
+          class="adjust-input"
+          [ngModel]="adjustmentValue()"
+          (ngModelChange)="adjustmentValue.set($event)"
+        />
+        <button class="btn-plus" (click)="adjustmentValue.set(adjustmentValue() + 1)">+</button>
+      </div>
+
+      @if (adjustmentValue() !== 0) {
+        <p class="new-stock-preview">
+          New Stock:
+          <strong [class.danger]="(selectedItem()?.stock_quantity || 0) + adjustmentValue() < 0">
+            {{ (selectedItem()?.stock_quantity || 0) + adjustmentValue() }}
+          </strong>
+        </p>
+      }
+
+      <div class="form-group">
+        <label>Reason *</label>
+        <select
+          [ngModel]="adjustmentReason()"
+          (ngModelChange)="adjustmentReason.set($event)"
+        >
+          <option value="">Select reason...</option>
+          <option value="Restocking">Restocking</option>
+          <option value="Damaged goods">Damaged goods</option>
+          <option value="Manual correction">Manual correction</option>
+          <option value="Returns">Returns</option>
+          <option value="Theft/Loss">Theft/Loss</option>
+          <option value="Supplier delivery">Supplier delivery</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="onCloseModals()">Cancel</button>
+        <button
+          class="btn-confirm"
+          (click)="onConfirmAdjust()"
+          [disabled]="isAdjusting() || adjustmentValue() === 0"
+        >
+          {{ isAdjusting() ? 'Saving...' : 'Confirm Adjustment' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Stock History Modal -->
+@if (showHistoryModal()) {
+  <div class="modal-overlay">
+    <div class="modal wide-modal">
+      <div class="modal-header">
+        <h3>Stock History — {{ selectedItem()?.name }}</h3>
+        <button class="btn-close" (click)="onCloseModals()">✕</button>
+      </div>
+
+      @if (history().length > 0) {
+        <div class="history-list">
+          @for (item of history(); track item.timestamp) {
+            <div class="history-row">
+              <div class="history-icon" [class.positive]="item.adjustment > 0" [class.negative]="item.adjustment < 0">
+                {{ item.adjustment > 0 ? '↑' : '↓' }}
+              </div>
+              <div class="history-info">
+                <div class="history-title">{{ item.reason }}</div>
+                <div class="history-meta">by {{ item.adjusted_by }} • {{ item.timestamp }}</div>
+              </div>
+              <div class="history-change">
+                <span class="old-qty">{{ item.old_quantity }}</span>
+                <span class="arrow">→</span>
+                <span class="new-qty">{{ item.new_quantity }}</span>
+                <span class="adjustment" [class.positive]="item.adjustment > 0" [class.negative]="item.adjustment < 0">
+                  {{ item.adjustment > 0 ? '+' : '' }}{{ item.adjustment }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="no-data">No adjustment history yet</div>
+      }
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="onCloseModals()">Close</button>
+      </div>
+    </div>
+  </div>
+}
